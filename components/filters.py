@@ -14,6 +14,9 @@ def generate_filter(id, title, options, multi, value=None, clearable=False, desc
     if title == 'Academic Yr':
         value = ['filter-2020-21']
 
+    elif title == 'Segment':
+        value = ['filter-SIR\'ed']
+
     return [
         dbc.Label(title, html_for="dropdown", className="mt-3"),
         html.Br() if description is not None else None,
@@ -23,7 +26,10 @@ def generate_filter(id, title, options, multi, value=None, clearable=False, desc
 
 columns = data.load_columns()
 filters = []
-for col in sorted(columns.keys()):
+sorted_columns = list(sorted(columns.keys()))
+sorted_columns.insert(0, sorted_columns.pop(sorted_columns.index('Segment')))
+
+for col in sorted_columns:
     values = columns[col]
     filters.extend(generate_filter(id='filter-' + col, title=col, options=values, multi=True))
 
@@ -32,9 +38,7 @@ def get_filter_div():
         dbc.CardBody([
             dbc.FormGroup(
                 [dbc.Alert("Next, filter your data. Recommended: leave the default values for now!", dismissable=True, fade=True, className="mt-2")] + \
-                generate_filter(id='category-filter', title='Applications, Acceptances, or SIR\'s', 
-                                options=['Applications', 'Admitted Students', 'SIR\'ed Students'], multi=False, clearable=False, value='filter-SIR\'ed Students') + \
                 filters
             )
-        ])
+        ]), className="mt-3"
     )
